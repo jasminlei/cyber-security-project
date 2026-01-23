@@ -62,21 +62,22 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     # FLAW 1: A01 - Broken Access Control
     # Any authenticated user can update or delete any item, even if they don't own it.
-    def delete(self, request, *args, **kwargs):
-        return super().delete(request, *args, **kwargs)
+    def perform_destroy(self, instance):
+        instance.delete()
 
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+    def perform_update(self, serializer):
+        serializer.save()
 
     # FIX:
-    # def delete(self, request, *args, **kwargs):
-    #     item = self.get_object()
-    #     if item.seller != request.user:
-    #         return Response(
-    #             {"detail": "You don't have permission to delete this item."},
-    #             status=status.HTTP_403_FORBIDDEN,
-    #         )
-    #     return super().delete(request, *args, **kwargs)
+    # def perform_destroy(self, instance):
+    #     if instance.seller != self.request.user:
+    #         raise PermissionDenied("You don't have permission to delete this item.")
+    #     instance.delete()
+
+    # def perform_update(self, serializer):
+    #     if serializer.instance.seller != self.request.user:
+    #         raise PermissionDenied("You don't have permission to edit this item.")
+    #     serializer.save()
 
     # def update(self, request, *args, **kwargs):
     #     item = self.get_object()
