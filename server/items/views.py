@@ -69,6 +69,7 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save()
 
     # FIX:
+    # move next line up to imports:
     # from rest_framework.exceptions import PermissionDenied
 
     # def perform_destroy(self, instance):
@@ -80,15 +81,6 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     #     if serializer.instance.seller != self.request.user:
     #         raise PermissionDenied("You don't have permission to edit this item.")
     #     serializer.save()
-
-    # def update(self, request, *args, **kwargs):
-    #     item = self.get_object()
-    #     if item.seller != request.user:
-    #         return Response(
-    #             {"detail": "You don't have permission to edit this item."},
-    #             status=status.HTTP_403_FORBIDDEN,
-    #         )
-    #     return super().update(request, *args, **kwargs)
 
 
 class UserItemsView(generics.ListAPIView):
