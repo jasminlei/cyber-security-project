@@ -17,9 +17,6 @@
 
     <div v-else class="items-grid">
       <div v-for="item in items" :key="item.id" class="item-card">
-        <div class="item-image" v-if="item.image_url">
-          <img :src="item.image_url" :alt="item.title" />
-        </div>
         <div class="item-content">
           <h3>{{ item.title }}</h3>
           <p class="description">{{ item.description }}</p>
@@ -141,13 +138,6 @@ onMounted(() => {
     0 4px 12px rgba(50, 50, 93, 0.1),
     0 1px 3px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
-}
-
-.item-image img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  background: #f7f9fc;
 }
 
 .item-content {

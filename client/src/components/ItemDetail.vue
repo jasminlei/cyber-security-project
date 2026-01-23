@@ -80,10 +80,10 @@ function formatDate(dateString) {
 }
 
 onMounted(async () => {
+  await fetchItem();
   if (authStore.isAuthenticated && !authStore.user) {
     await authStore.fetchCurrentUser();
   }
-  await fetchItem();
 });
 </script>
 
