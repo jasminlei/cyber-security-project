@@ -69,6 +69,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save()
 
     # FIX:
+    # from rest_framework.exceptions import PermissionDenied
+
     # def perform_destroy(self, instance):
     #     if instance.seller != self.request.user:
     #         raise PermissionDenied("You don't have permission to delete this item.")
