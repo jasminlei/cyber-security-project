@@ -25,7 +25,7 @@ class ItemSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "seller", "created_at", "updated_at"]
 
-    # FLAW 3: A03 - Injection (Stored XSS)
+    # FLAW 3: A05 - Injection (Stored XSS)
     # Backend does not validate or sanitize HTML in description field
     # Malicious HTML/JavaScript is stored in database and executed on frontend
     # No validation is performed here - any input is accepted

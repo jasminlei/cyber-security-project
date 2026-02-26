@@ -144,7 +144,7 @@ _Permission denied, only owner can edit_
 
 ---
 
-### 2. Security Misconfiguration (A05)
+### 2. Security Misconfiguration (A02)
 
 **Location:** `server/backend/settings.py` and `server/backend/urls.py`
 
@@ -160,7 +160,7 @@ _Generic error page hides sensitive information_
 
 ---
 
-### 3. Injection - Stored XSS (A03)
+### 3. Injection - Stored XSS (A05)
 
 **Location:** `server/items/serializers.py` (backend) and `client/src/components/ItemDetail.vue` (frontend)
 

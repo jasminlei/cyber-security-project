@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-@e4=1f+2%*lm!5n+$#%a--z)td=ym(illp@guus*_2_7u4wnox"
 
-# FLAW 2: A05 - Security Misconfiguration
+# FLAW 2: A02 - Security Misconfiguration
 # DEBUG mode is enabled, exposing sensitive information like stack traces, SQL queries, and internal paths
 # Visit http://localhost:8000/test-error/ to see error page with sensitive data
 DEBUG = True
