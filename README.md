@@ -180,7 +180,7 @@ _XSS alert executes when viewing the item and stored payload runs on every view_
 
 **After fix:**
 ![After Fix](screenshots/flaw3-after-1.png)
-_Backend rejects HTML tags OR frontend escapes them, no script execution_
+_Backend rejects HTML tags, no script execution_
 
 ---
 
