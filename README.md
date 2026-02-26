@@ -140,7 +140,7 @@ _Edited item is shown in the item listing_
 
 **After fix:**
 ![After Fix](screenshots/flaw-1-after-1.png)
-_Permission denied - only owner can edit_
+_Permission denied, only owner can edit_
 
 ---
 
@@ -162,20 +162,25 @@ _Generic error page hides sensitive information_
 
 ### 3. Injection - Stored XSS (A03)
 
-**Location:** `client/src/components/ItemDetail.vue`
+**Location:** `server/items/serializers.py` (backend) and `client/src/components/ItemDetail.vue` (frontend)
 
-**Description:** User input (item description) is rendered using `v-html`, allowing JavaScript execution. An attacker can inject malicious scripts.
+**Description:**
+
+- **Backend:** No validation or sanitization of HTML in description field. Malicious scripts are stored directly in the database.
+- **Frontend:** User input is rendered using `v-html`, allowing JavaScript execution.
+
+This is a stored XSS vulnerability, the malicious code is permanently stored on the server and executed whenever someone views the item.
 
 **Before fix:**
 ![Before Fix 1](screenshots/flaw3-before-1.png)
-_Creating item with XSS payload: `<img src=x onerror="alert('XSS')" />`_
+_Creating item with XSS payload: `<img src=x onerror="alert('XSS')" />`, backend accepts it without validation_
 
 ![Before Fix 2](screenshots/flaw3-before-2.png)
-_XSS alert executes when viewing the item_
+_XSS alert executes when viewing the item and stored payload runs on every view_
 
 **After fix:**
 ![After Fix](screenshots/flaw3-after-1.png)
-_HTML is escaped and displayed as plain text - no script execution_
+_Backend rejects HTML tags OR frontend escapes them, no script execution_
 
 ---
 
@@ -191,7 +196,7 @@ _User can register with weak password with only 1 character_
 
 **After fix:**
 ![After Fix](screenshots/flaw4-after-1.png)
-_Password rejected - must include uppercase, lowercase, numbers, and special characters_
+_Password rejected: must include uppercase, lowercase, numbers, and special characters_
 
 ---
 
