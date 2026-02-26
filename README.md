@@ -117,3 +117,132 @@ The frontend will be available at `http://localhost:5173`
 ### Like items
 
 - Click the heart icon on any item
+
+## Security flaws
+
+This project intentionally contains 5 common security flaws from the OWASP Top 10. Each flaw is present in the codebase, and there is a commented-out fix for the problem below the actual flaw.
+
+### 1. Broken Access Control (A01)
+
+**Location:** `server/items/views.py` (class `ItemDetailView`)
+
+**Description:** Any authenticated user can delete or edit any item, even if they don't own it. No ownership check is performed.
+
+**Before fix:**
+![Before Fix 1](screenshots/flaw-1-before-1.png)
+_User can see delete button on items they don't own_
+
+![Before Fix 2](screenshots/flaw-1-before-2.png)
+_User successfully deletes another user's item_
+
+![Before Fix 3](screenshots/flaw-1-before-3.png)
+_Item is deleted without permission check_
+
+**After fix:**
+![After Fix](screenshots/flaw-1-after-1.png)
+_Permission denied - only owner can delete_
+
+**Fix (commented in code):**
+
+```python
+# def perform_destroy(self, instance):
+#     if instance.seller != self.request.user:
+#         raise PermissionDenied("You don't have permission to delete this item.")
+#     instance.delete()
+```
+
+---
+
+### 2. Security Misconfiguration (A05)
+
+**Location:** `server/backend/settings.py` and `server/backend/urls.py`
+
+**Description:** `DEBUG = True` exposes sensitive information like stack traces, local variables, and database credentials when errors occur. Visit `http://localhost:8000/test-error/` to see the vulnerability.
+
+**Before fix (DEBUG=True):**
+![Before Fix](screenshots/flaw2-before-1.png)
+_Detailed error page shows sensitive data: database credentials, API keys, file paths_
+
+**After fix (DEBUG=False):**
+![After Fix](screenshots/flaw2-after-1.png)
+_Generic error page hides sensitive information_
+
+**Fix (commented in code):**
+
+```python
+# DEBUG = False
+```
+
+---
+
+### 3. Injection - Stored XSS (A03)
+
+**Location:** `client/src/components/ItemsList.vue` and `client/src/components/ItemDetail.vue`
+
+**Description:** User input (item description) is rendered using `v-html`, allowing JavaScript execution. An attacker can inject malicious scripts.
+
+**Before fix:**
+![Before Fix 1](screenshots/flaw3-before-1.png)
+_Creating item with XSS payload: `<img src=x onerror="alert('XSS')" />`_
+
+![Before Fix 2](screenshots/flaw3-before-2.png)
+_XSS alert executes when viewing the item_
+
+**After fix:**
+![After Fix](screenshots/flaw3-after-1.png)
+_HTML is escaped and displayed as plain text - no script execution_
+
+**Fix (commented in code):**
+
+```vue
+<!-- Use {{ item.description }} instead of v-html -->
+<p class="description">{{ item.description }}</p>
+```
+
+---
+
+### 4. Weak Password Policy (A07)
+
+**Location:** `server/users/serializers.py` (class `RegisterSerializer`)
+
+**Description:** Passwords only require 8 characters minimum. No complexity requirements (uppercase, numbers, special characters).
+
+**Before fix:**
+![Before Fix](screenshots/flaw4-before-1.png)
+_User can register with weak password like "password" or "12345678"_
+
+**After fix:**
+![After Fix](screenshots/flaw4-after-1.png)
+_Password rejected - must include uppercase, lowercase, numbers, and special characters_
+
+**Fix (commented in code):**
+
+```python
+# Add validation for password complexity:
+# - At least one uppercase letter
+# - At least one lowercase letter
+# - At least one number
+# - At least one special character
+```
+
+---
+
+### 5. Security Logging and Monitoring Failures (A09)
+
+**Location:** `server/users/views.py` (class `LoginView`)
+
+**Description:** Only successful logins are logged. Failed login attempts are not logged, allowing attackers to perform brute-force attacks undetected.
+
+**Before fix:**
+![Before Fix](screenshots/flaw5-before-1.png)
+_Terminal shows only successful logins - failed attempts are invisible_
+
+**After fix:**
+![After Fix](screenshots/flaw5-after-1.png)
+_Terminal logs both successful and failed login attempts with usernames and IP addresses_
+
+**Fix (commented in code):**
+
+```python
+# logger.warning(f"FAILED: Login attempt - username={username}, ip={ip_address}")
+```
