@@ -10,7 +10,7 @@
       <!-- FLAW 3: A03 - Injection (Stored XSS) -->
       <!-- Using v-html allows HTML/JavaScript execution from user input -->
       <!-- Try: <img src=x onerror="alert('XSS')" /> -->
-      <!-- <p class="description" v-html="item.description"></p> -->
+      <p class="description" v-html="item.description"></p>
       <!-- FIX: Use {{ item.description }} instead of v-html -->
       <!-- <p class="description">{{ item.description }}</p> -->
       <p class="seller">Seller: {{ item.seller_username }}</p>
