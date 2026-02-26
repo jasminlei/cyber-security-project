@@ -7,7 +7,12 @@
 
     <div class="item-info">
       <p class="price">{{ item.price }} €</p>
-      <p class="description">{{ item.description }}</p>
+      <!-- FLAW 3: A03 - Injection (Stored XSS) -->
+      <!-- Using v-html allows HTML/JavaScript execution from user input -->
+      <!-- Try: <img src=x onerror="alert('XSS')" /> -->
+      <!-- <p class="description" v-html="item.description"></p> -->
+      <!-- FIX: Use {{ item.description }} instead of v-html -->
+      <!-- <p class="description">{{ item.description }}</p> -->
       <p class="seller">Seller: {{ item.seller_username }}</p>
       <p class="contact" v-if="item.contact">Contact: {{ item.contact }}</p>
       <p class="image-link" v-if="item.image_url">

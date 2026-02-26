@@ -6,53 +6,22 @@ from .models import Item, Like
 from .serializers import ItemSerializer
 
 
-# FLAW 3: A05 - SQL Injection
-# Using raw SQL without parameterization allows SQL injection attacks
-# Using executescript() allows multiple SQL statements
-# User can write this in search bar to change prices: '; UPDATE items_item SET price=0 WHERE id=1; --
 class ItemListCreateView(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         search = self.request.query_params.get("search", "")
-
         if search:
-            from django.db import connection
+            from django.db.models import Q
 
-            query = f"""
-                SELECT * FROM items_item 
-                WHERE title LIKE '%{search}%' 
-                OR description LIKE '%{search}%';
-            """
-
-            cursor = connection.cursor()
-            cursor.db.connection.executescript(query)
-
-            cursor.execute("SELECT * FROM items_item")
-            columns = [col[0] for col in cursor.description]
-            results = []
-            for row in cursor.fetchall():
-                item_dict = dict(zip(columns, row))
-                results.append(Item(**item_dict))
-            return results
-
+            return Item.objects.filter(
+                Q(title__icontains=search) | Q(description__icontains=search)
+            )
         return Item.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
-
-
-# FIX: Use Django ORM with proper filtering:
-# class ItemListCreateView(generics.ListCreateAPIView):
-#     queryset = Item.objects.all()
-#     serializer_class = ItemSerializer
-#     permission_classes = [IsAuthenticatedOrReadOnly]
-#     filter_backends = [filters.SearchFilter]
-#     search_fields = ["title", "description"]
-#
-#     def perform_create(self, serializer):
-#         serializer.save(seller=self.request.user)
 
 
 class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):

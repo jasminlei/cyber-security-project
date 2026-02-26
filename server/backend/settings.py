@@ -22,14 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-@e4=1f+2%*lm!5n+$#%a--z)td=ym(illp@guus*_2_7u4wnox"
 
-# FLAW 2: A02 - Security Misconfiguration
-# DEBUG mode is enabled in production, this exposes sensitive information like stack traces, SQL queries, and internal paths
+# FLAW 2: A05 - Security Misconfiguration
+# DEBUG mode is enabled, exposing sensitive information like stack traces, SQL queries, and internal paths
+# Visit http://localhost:8000/test-error/ to see error page with sensitive data
 DEBUG = True
 
 # FIX:
 # DEBUG = False
 
-ALLOWED_HOSTS = []  # VULNERABLE: Should specify exact domains
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
@@ -58,25 +62,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-# FIX: Remove the insecure middleware and add proper security settings:
-# MIDDLEWARE = [
-#     "django.middleware.security.SecurityMiddleware",
-#     "django.contrib.sessions.middleware.SessionMiddleware",
-#     "corsheaders.middleware.CorsMiddleware",
-#     "django.middleware.common.CommonMiddleware",
-#     "django.middleware.csrf.CsrfViewMiddleware",
-#     "django.contrib.auth.middleware.AuthenticationMiddleware",
-#     "django.contrib.messages.middleware.MessageMiddleware",
-#     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-# ]
-#
-# And add these security settings:
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_BROWSER_XSS_FILTER = True
-# X_FRAME_OPTIONS = 'DENY'
-# SECURE_HSTS_SECONDS = 31536000
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 ROOT_URLCONF = "backend.urls"
 
@@ -163,22 +148,8 @@ REST_FRAMEWORK = {
     ],
 }
 
-# FLAW 2: A02 - Security Misconfiguration
-# Problem 3: CORS is configured too permissively
-# VULNERABLE CODE (currently active):
-CORS_ALLOW_ALL_ORIGINS = True  # Allows requests from ANY domain!
-# CORS_ALLOWED_ORIGINS is ignored when CORS_ALLOW_ALL_ORIGINS is True
-
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-# FIX: Use specific allowed origins
-# CORS_ALLOW_ALL_ORIGINS = False
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-#     "http://localhost:8080",
-#     "http://127.0.0.1:5173",
-#     "http://127.0.0.1:8080",
-# ]
 
 
 # FLAW 5: A09 - Security Logging and Monitoring Failures
@@ -200,11 +171,10 @@ LOGGING = {
         },
     },
     "loggers": {
-        "users": {  # This matches the logger name in users/views.py
+        "users": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
         },
     },
 }
-# CORS_ALLOW_CREDENTIALS = True

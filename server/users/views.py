@@ -29,7 +29,7 @@ class RegisterView(generics.CreateAPIView):
 
 # FLAW 5: A09 - Security Logging and Monitoring Failures
 # Problem: Only successful logins are logged, failed attempts are NOT logged
-# This allows attackers to perform brute-force attacks undetected
+# This allows attackers to perform brute-force attacks
 class LoginView(ObtainAuthToken):
     permission_classes = [AllowAny]
 
